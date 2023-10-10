@@ -41,6 +41,39 @@ The API will start running on `http://localhost:9090`.
 - **Method:** `GET`
 - **Response:** List of all to-do items.
 
+#### Example
+
+**Request:**
+
+```bash
+GET http://localhost:9090/todos
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "1",
+    "title": "Clean Room",
+    "completed": false
+  },
+  {
+    "id": "2",
+    "title": "Read Book",
+    "completed": false
+  },
+  {
+    "id": "3",
+    "title": "Record Video",
+    "completed": false
+  }
+]
+```
+
+This example demonstrates a successful request to retrieve all to-do items. The response is a JSON array containing details of each to-do item, including their `id`, `title`, and `completed` status.
+
+
 ### Get a Single To-Do Item
 
 - **URL:** `/todos/:id`
@@ -48,6 +81,27 @@ The API will start running on `http://localhost:9090`.
 - **Parameters:**
   - `id` (string) - The unique identifier of the to-do item.
 - **Response:** Details of the specified to-do item.
+
+#### Example
+**Request:**
+
+```bash
+GET http://localhost:9090/todos/1
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "1",
+    "title": "Clean Room",
+    "completed": false
+  }
+]
+```
+
+This example demonstrates a successful request to retrieve a single to-do item with id "1". The response is a JSON object containing the details of the specified to-do item, including its `id`, `title`, and `completed` status.
 
 ### Create a To-Do Item
 
@@ -57,6 +111,34 @@ The API will start running on `http://localhost:9090`.
   - `title` (string) - The title or description of the to-do item.
 - **Response:** Details of the newly created to-do item.
 
+#### Example
+
+**Request:**
+
+```bash
+POST http://localhost:9090/todos
+Content-Type: application/json
+```
+```JSON
+{
+  "id":"4",
+  "title":"Write Code",
+  "completed":false
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "4",
+  "title": "Write Code",
+  "completed": false
+}
+```
+
+This example demonstrates a successful request to create a new to-do item with the title "Write Code." The response is a JSON object containing the details of the newly created to-do item, including its `id`, `title`, and `completed` status.
+
 ### Update To-Do Item Status
 
 - **URL:** `/todos/:id`
@@ -64,6 +146,26 @@ The API will start running on `http://localhost:9090`.
 - **Parameters:**
   - `id` (string) - The unique identifier of the to-do item.
 - **Response:** Updated details of the to-do item with toggled status (completed/uncompleted).
+
+#### Example
+
+**Request:**
+
+```bash
+PATCH http://localhost:9090/todos/1
+```
+
+**Response:**
+
+```json
+{
+  "id": "1",
+  "title": "Clean Room",
+  "completed": true
+}
+```
+
+This example demonstrates a successful request to toggle the status of a to-do item with `id` "1". The response is a JSON object containing the updated details of the to-do item, including its `id`, `title`, and `completed` status, which has been toggled to `true`.
 
 ### Delete a To-Do Item
 
@@ -73,11 +175,47 @@ The API will start running on `http://localhost:9090`.
   - `id` (string) - The unique identifier of the to-do item.
 - **Response:** A success message if the item was deleted successfully.
 
+#### Example
+
+**Request:**
+
+```bash
+DELETE http://localhost:9090/todos/1
+```
+
+**Response:**
+
+```json
+{
+  "message": "Todo deleted successfully"
+}
+```
+
+This example demonstrates a successful request to delete a to-do item with `id` "1". The response is a JSON object containing a success message indicating that the to-do item has been deleted successfully.
+
 ### Reset To-Do List
 
 - **URL:** `/todos/reset`
 - **Method:** `DELETE`
 - **Response:** A success message indicating that the entire to-do list has been reset.
+
+#### Example
+
+**Request:**
+
+```bash
+DELETE http://localhost:9090/todos/reset
+```
+
+**Response:**
+
+```json
+{
+  "message": "Todo List reset"
+}
+```
+
+This example demonstrates a successful request to reset the entire to-do list. The response is a JSON object containing a success message indicating that the to-do list has been reset successfully.
 
 ## Usage
 
