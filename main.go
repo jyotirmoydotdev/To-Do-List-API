@@ -1,0 +1,109 @@
+package main
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+type todo struct {
+	ID        string `json:"id"`
+	Item      string `json:"title"`
+	Completed bool   `json:"completed"`
+}
+
+var todos = []todo{
+	{ID: "1", Item: "Clean Room", Completed: false},
+	{ID: "2", Item: "Read Book", Completed: false},
+	{ID: "3", Item: "Record Video", Completed: false},
+}
+
+func getTodos(context *gin.Context) {
+	context.IndentedJSON(http.StatusOK, todos)
+}
+
+func addTodo(context *gin.Context) {
+	var newTodo todo
+	if err := context.BindJSON(&newTodo); err != nil {
+		return
+	}
+
+	todos = append(todos, newTodo)
+	context.IndentedJSON(http.StatusCreated, newTodo)
+}
+
+func getTodo(context *gin.Context) {
+	id := context.Param("id")
+	todo, err := getTodoByID(id)
+	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Todo not found"})
+		return
+	}
+	context.IndentedJSON(http.StatusOK, todo)
+}
+
+func getTodoByID(id string) (*todo, error) {
+	for i, t := range todos {
+		if t.ID == id {
+			return &todos[i], nil
+		}
+	}
+	return nil, errors.New("todo not found")
+}
+
+func deleteTodo(context *gin.Context) {
+	id := context.Param("id")
+	_, err := getTodoByID(id)
+	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Todo not Found"})
+		return
+	}
+
+	// Remove the todo from the slice
+	var index int
+	for i, t := range todos {
+		if t.ID == id {
+			index = i
+			break
+		}
+	}
+	todos = deleteElement(todos, index)
+
+	context.IndentedJSON(http.StatusOK, gin.H{"message": "Todo deleted successfully"})
+}
+func deleteElement(slice []todo, index int) []todo {
+	return append(slice[:index], slice[index+1:]...)
+}
+
+func toggleTodoStatus(context *gin.Context) {
+	id := context.Param("id")
+	todo, err := getTodoByID(id)
+	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Todo not Found"})
+		return
+	}
+
+	todo.Completed = !todo.Completed
+	context.IndentedJSON(http.StatusOK, todo)
+}
+
+func reset(context *gin.Context) {
+	if len(todos) == 0 {
+		context.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Todo is empty"})
+		return
+	}
+	todos = todos[:0]
+	context.IndentedJSON(http.StatusOK, gin.H{"message": "Todo List reset"})
+}
+
+func main() {
+	router := gin.Default()
+	router.GET("/todos", getTodos)
+	router.GET("todos/:id", getTodo)
+	router.PATCH("todos/:id", toggleTodoStatus)
+	router.POST("/todos", addTodo)
+	router.DELETE("/todos/:id", deleteTodo)
+	router.DELETE("/todos/reset", reset)
+	router.Run("localhost:9090")
+}
